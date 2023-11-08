@@ -23,6 +23,7 @@ import os
 import shutil
 import warnings
 from pathlib import Path
+import ast
 
 import numpy as np
 import torch
@@ -151,9 +152,14 @@ def parse_args(input_args=None):
     parser.add_argument(
         "--train_list",
         default=None,
-        type=str, 
-        action='append',
-        help="List of our training dataset",
+        type=ast.literal_eval, 
+        help="List of our training dataset path",
+    )
+    parser.add_argument(
+        "--text_list",
+        default=None,
+        type=ast.literal_eval, 
+        help="List of our training dataset text",
     )
     parser.add_argument(
         "--class_data_dir",
@@ -449,7 +455,8 @@ class DreamBoothDataset(Dataset):
     def __init__(
         self,
         instance_data_root,
-        train_list=None,
+        path_list=None,
+        text_list=None,
         class_data_root=None,
         class_num=None,
         size=1024,
@@ -465,7 +472,8 @@ class DreamBoothDataset(Dataset):
         self.instance_images_path = list(Path(instance_data_root).iterdir())
         #with open(tag_data_root) as f:
         #    self.tag_data_root = [x.strip() for x in f.readlines()]
-        self.train_list=train_list
+        self.path_list = path_list
+        self.text_list = text_list
         self.num_instance_images = len(self.instance_images_path)
         self._length = self.num_instance_images
 
@@ -496,18 +504,18 @@ class DreamBoothDataset(Dataset):
     def __getitem__(self, index):
         example = {}
         #instance_image = Image.open(self.instance_images_path[index % self.num_instance_images])
-        print('train_list', self.train_list, flush=True)
+        print('train_list', self.path_list, flush=True)
         print('index', index, flush=True)
         print('index  self.num_instance_images', index % self.num_instance_images, flush=True)
-        print('self.train_list[index  self.num_instance_images]', self.train_list[index % self.num_instance_images], flush=True)
-        print('path', self.instance_data_root+(self.train_list[index % self.num_instance_images])[0],flush=True)
-        instance_image = Image.open(self.instance_data_root+(self.train_list[index % self.num_instance_images])[0])
+        print('self.train_list[index  self.num_instance_images]', self.path_list[index % self.num_instance_images], flush=True)
+        print('path', self.instance_data_root+(self.path_list[index % self.num_instance_images]),flush=True)
+        instance_image = Image.open(self.instance_data_root+(self.path_list[index % self.num_instance_images]))
         instance_image = exif_transpose(instance_image)
 
         if not instance_image.mode == "RGB":
             instance_image = instance_image.convert("RGB")
         example["instance_images"] = self.image_transforms(instance_image)
-        example['tags'] = self.train_list[index % self.num_instance_images][1]
+        example['tags'] = self.text_list[index % self.num_instance_images]
 
         if self.class_data_root:
             class_image = Image.open(self.class_images_path[index % self.num_class_images])
@@ -992,7 +1000,8 @@ def main(args):
     # Dataset and DataLoaders creation:
     train_dataset = DreamBoothDataset(
         instance_data_root=args.instance_data_dir,
-        train_list = args.train_list,
+        path_list = args.path_list,
+        text_list = args.text_list,
         class_data_root=args.class_data_dir if args.with_prior_preservation else None,
         class_num=args.num_class_images,
         size=args.resolution,
