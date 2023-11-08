@@ -150,7 +150,7 @@ def parse_args(input_args=None):
         help="A folder containing the training data of instance images.",
     )
     parser.add_argument(
-        "--train_list",
+        "--path_list",
         default=None,
         type=ast.literal_eval, 
         help="List of our training dataset path",
