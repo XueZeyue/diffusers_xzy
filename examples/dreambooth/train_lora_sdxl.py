@@ -150,6 +150,7 @@ def parse_args(input_args=None):
     )
     parser.add_argument(
         "--train_list",
+        type=list,
         default=None,
         required=True,
         help="List of our training dataset",
