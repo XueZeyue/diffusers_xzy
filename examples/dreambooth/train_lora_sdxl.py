@@ -149,6 +149,12 @@ def parse_args(input_args=None):
         help="A folder containing the training data of instance images.",
     )
     parser.add_argument(
+        "--train_list",
+        default=None,
+        required=True,
+        help="List of our training dataset",
+    )
+    parser.add_argument(
         "--class_data_dir",
         type=str,
         default=None,
@@ -442,7 +448,7 @@ class DreamBoothDataset(Dataset):
     def __init__(
         self,
         instance_data_root,
-        tag_data_root,
+        train_list,
         class_data_root=None,
         class_num=None,
         size=1024,
@@ -456,8 +462,9 @@ class DreamBoothDataset(Dataset):
             raise ValueError("Instance images root doesn't exists.")
 
         self.instance_images_path = list(Path(instance_data_root).iterdir())
-        with open(tag_data_root) as f:
-            self.tag_data_root = [x.strip() for x in f.readlines()]
+        #with open(tag_data_root) as f:
+        #    self.tag_data_root = [x.strip() for x in f.readlines()]
+        self.train_list=train_list
         self.num_instance_images = len(self.instance_images_path)
         self._length = self.num_instance_images
 
@@ -487,13 +494,14 @@ class DreamBoothDataset(Dataset):
 
     def __getitem__(self, index):
         example = {}
-        instance_image = Image.open(self.instance_images_path[index % self.num_instance_images])
+        #instance_image = Image.open(self.instance_images_path[index % self.num_instance_images])
+        instance_image = Image.open(self.instance_data_root+self.train_list[index % self.num_instance_images]['file_name'])
         instance_image = exif_transpose(instance_image)
 
         if not instance_image.mode == "RGB":
             instance_image = instance_image.convert("RGB")
         example["instance_images"] = self.image_transforms(instance_image)
-        example['tags'] = self.tag_data_root[index]
+        example['tags'] = self.train_list[index % self.num_instance_images]['text']
 
         if self.class_data_root:
             class_image = Image.open(self.class_images_path[index % self.num_class_images])
@@ -978,6 +986,7 @@ def main(args):
     # Dataset and DataLoaders creation:
     train_dataset = DreamBoothDataset(
         instance_data_root=args.instance_data_dir,
+        #tag_data_root = args.tag_data_root,
         class_data_root=args.class_data_dir if args.with_prior_preservation else None,
         class_num=args.num_class_images,
         size=args.resolution,
