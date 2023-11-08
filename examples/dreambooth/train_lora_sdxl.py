@@ -498,14 +498,14 @@ class DreamBoothDataset(Dataset):
         print('index', index, flush=True)
         print('index  self.num_instance_images', index % self.num_instance_images, flush=True)
         print('self.train_list[index  self.num_instance_images]', self.train_list[index % self.num_instance_images], flush=True)
-        print('path', self.instance_data_root+(self.train_list[index % self.num_instance_images])['file_name'],flush=True)
-        instance_image = Image.open(self.instance_data_root+(self.train_list[index % self.num_instance_images])['file_name'])
+        print('path', self.instance_data_root+(self.train_list[index % self.num_instance_images])[0],flush=True)
+        instance_image = Image.open(self.instance_data_root+(self.train_list[index % self.num_instance_images])[0])
         instance_image = exif_transpose(instance_image)
 
         if not instance_image.mode == "RGB":
             instance_image = instance_image.convert("RGB")
         example["instance_images"] = self.image_transforms(instance_image)
-        example['tags'] = self.train_list[index % self.num_instance_images]['text']
+        example['tags'] = self.train_list[index % self.num_instance_images][1]
 
         if self.class_data_root:
             class_image = Image.open(self.class_images_path[index % self.num_class_images])
