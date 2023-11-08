@@ -448,7 +448,7 @@ class DreamBoothDataset(Dataset):
     def __init__(
         self,
         instance_data_root,
-        train_list,
+        train_list=None,
         class_data_root=None,
         class_num=None,
         size=1024,
@@ -495,7 +495,8 @@ class DreamBoothDataset(Dataset):
     def __getitem__(self, index):
         example = {}
         #instance_image = Image.open(self.instance_images_path[index % self.num_instance_images])
-        instance_image = Image.open(self.instance_data_root+self.train_list[index % self.num_instance_images]['file_name'])
+        print(self.instance_data_root+(self.train_list[index % self.num_instance_images])['file_name'])
+        instance_image = Image.open(self.instance_data_root+(self.train_list[index % self.num_instance_images])['file_name'])
         instance_image = exif_transpose(instance_image)
 
         if not instance_image.mode == "RGB":
