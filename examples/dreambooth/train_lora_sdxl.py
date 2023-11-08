@@ -504,12 +504,12 @@ class DreamBoothDataset(Dataset):
     def __getitem__(self, index):
         example = {}
         #instance_image = Image.open(self.instance_images_path[index % self.num_instance_images])
-        print('train_list', self.path_list, flush=True)
-        print('index', index, flush=True)
-        print('index  self.num_instance_images', index % self.num_instance_images, flush=True)
-        print('self.train_list[index  self.num_instance_images]', self.path_list[index % self.num_instance_images], flush=True)
-        print('path', self.instance_data_root+(self.path_list[index % self.num_instance_images]),flush=True)
-        instance_image = Image.open(self.instance_data_root+(self.path_list[index % self.num_instance_images]))
+        #print('train_list', self.path_list, flush=True)
+        #print('index', index, flush=True)
+        #print('index  self.num_instance_images', index % self.num_instance_images, flush=True)
+        #print('self.train_list[index  self.num_instance_images]', self.path_list[index % self.num_instance_images], flush=True)
+        #print('path', self.instance_data_root+(self.path_list[index % self.num_instance_images]),flush=True)
+        instance_image = Image.open(str(self.instance_data_root)+(self.path_list[index % self.num_instance_images]))
         instance_image = exif_transpose(instance_image)
 
         if not instance_image.mode == "RGB":
