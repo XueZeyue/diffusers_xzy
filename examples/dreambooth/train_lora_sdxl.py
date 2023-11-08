@@ -495,6 +495,9 @@ class DreamBoothDataset(Dataset):
     def __getitem__(self, index):
         example = {}
         #instance_image = Image.open(self.instance_images_path[index % self.num_instance_images])
+        print('index', index, flush=True)
+        print('index  self.num_instance_images', index % self.num_instance_images, flush=True)
+        print('self.train_list[index  self.num_instance_images]', self.train_list[index % self.num_instance_images], flush=True)
         print('path', self.instance_data_root+(self.train_list[index % self.num_instance_images])['file_name'],flush=True)
         instance_image = Image.open(self.instance_data_root+(self.train_list[index % self.num_instance_images])['file_name'])
         instance_image = exif_transpose(instance_image)
