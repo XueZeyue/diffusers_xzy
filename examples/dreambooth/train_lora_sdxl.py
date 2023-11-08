@@ -495,6 +495,7 @@ class DreamBoothDataset(Dataset):
     def __getitem__(self, index):
         example = {}
         #instance_image = Image.open(self.instance_images_path[index % self.num_instance_images])
+        print('train_list', self.train_list, flush=True)
         print('index', index, flush=True)
         print('index  self.num_instance_images', index % self.num_instance_images, flush=True)
         print('self.train_list[index  self.num_instance_images]', self.train_list[index % self.num_instance_images], flush=True)
