@@ -986,7 +986,7 @@ def main(args):
     # Dataset and DataLoaders creation:
     train_dataset = DreamBoothDataset(
         instance_data_root=args.instance_data_dir,
-        #tag_data_root = args.tag_data_root,
+        train_list = args.train_list,
         class_data_root=args.class_data_dir if args.with_prior_preservation else None,
         class_num=args.num_class_images,
         size=args.resolution,
